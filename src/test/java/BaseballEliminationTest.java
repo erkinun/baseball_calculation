@@ -2,6 +2,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class BaseballEliminationTest {
@@ -38,5 +39,23 @@ public class BaseballEliminationTest {
         int index = (Integer) indexMethod.invoke(division, "Atlanta");
 
         Assert.assertEquals(0, index);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testIndexException() throws Throwable {
+
+        try {
+
+            Method indexMethod = BaseballElimination.class.getDeclaredMethod("findIndexOfTeam", String.class);
+            indexMethod.setAccessible(true);
+            int index = (Integer) indexMethod.invoke(division, "hede");
+
+            Assert.assertEquals(0, index);
+        }
+        catch (InvocationTargetException targetException) {
+            throw targetException.getCause();
+        }
+
+
     }
 }
