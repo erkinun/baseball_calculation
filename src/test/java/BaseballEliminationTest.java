@@ -45,7 +45,6 @@ public class BaseballEliminationTest {
     public void testIndexException() throws Throwable {
 
         try {
-
             Method indexMethod = BaseballElimination.class.getDeclaredMethod("findIndexOfTeam", String.class);
             indexMethod.setAccessible(true);
             int index = (Integer) indexMethod.invoke(division, "hede");
@@ -56,6 +55,33 @@ public class BaseballEliminationTest {
             throw targetException.getCause();
         }
 
+    }
 
+    @Test
+    public void testAtlantaWins() throws Exception {
+        int wins = division.wins("Atlanta");
+
+        Assert.assertEquals(83, wins);
+    }
+
+    @Test
+    public void testMontrealLosses() throws Exception {
+        int losses = division.losses("Montreal");
+
+        Assert.assertEquals(82, losses);
+    }
+
+    @Test
+    public void testRemainingNewYork() throws Exception {
+        int remaining = division.remaining("New_York");
+
+        Assert.assertEquals(6, remaining);
+    }
+
+    @Test
+    public void testGamesAgainstPhiliVsMontreal() throws Exception {
+        int gameAgainst = division.against("Philadelphia", "Montreal");
+
+        Assert.assertEquals(2, gameAgainst);
     }
 }

@@ -58,15 +58,15 @@ public class BaseballElimination {
 
     public int losses(String team) {
             // number of losses for given team
-        throw new IllegalStateException("not implemented yet");
+        return losses[findIndexOfTeam(team)];
     }
     public int remaining(String team) {
             // number of remaining games for given team
-        throw new IllegalStateException("not implemented yet");
+        return remaining[findIndexOfTeam(team)];
     }
     public int against(String team1, String team2) {
             // number of remaining games between team1 and team2
-        throw new IllegalStateException("not implemented yet");
+        return gamesAgaints[findIndexOfTeam(team1)][findIndexOfTeam(team2)];
     }
     public boolean isEliminated(String team) {
             // is given team eliminated?
