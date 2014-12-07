@@ -50,9 +50,12 @@ public class BaseballElimination {
         return Arrays.asList(teams);
     }
     public int wins(String team) {
-            // number of wins for given team
-        throw new IllegalStateException("not implemented yet");
+        // number of wins for given team
+        int index = findIndexOfTeam(team);
+
+        return wins[index];
     }
+
     public int losses(String team) {
             // number of losses for given team
         throw new IllegalStateException("not implemented yet");
@@ -94,5 +97,15 @@ public class BaseballElimination {
 //                StdOut.println(team + " is not eliminated");
 //            }
         }
+    }
+
+    private int findIndexOfTeam(String team) {
+        for (int i = 0; i < numberOfTeams; i++) {
+            if (teams[i].equals(team)) {
+                return i;
+            }
+        }
+
+        throw new IllegalArgumentException("team not valid");
     }
 }

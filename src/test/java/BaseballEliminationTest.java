@@ -2,6 +2,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.lang.reflect.Method;
+
 public class BaseballEliminationTest {
 
     private BaseballElimination division;
@@ -26,5 +28,15 @@ public class BaseballEliminationTest {
         for (String team: division.teams()) {
             System.out.println(team);
         }
+    }
+
+    @Test
+    public void testIndex() throws Exception {
+
+        Method indexMethod = BaseballElimination.class.getDeclaredMethod("findIndexOfTeam", String.class);
+        indexMethod.setAccessible(true);
+        int index = (Integer) indexMethod.invoke(division, "Atlanta");
+
+        Assert.assertEquals(0, index);
     }
 }
