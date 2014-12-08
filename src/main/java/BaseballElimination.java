@@ -70,8 +70,17 @@ public class BaseballElimination {
     }
     public boolean isEliminated(String team) {
             // is given team eliminated?
+
+        //construct the flow network
+        //FlowNetwork flow = constructFlowNetwork(team);
+
+        //find the max flow
+//        FordFulkerson alg = new FordFulkerson(flow, source, target);
+//        alg.value();
+
         throw new IllegalStateException("not implemented yet");
     }
+
     public Iterable<String> certificateOfElimination(String team) {
             // subset R of teams that eliminates given team; null if not eliminated
         throw new IllegalStateException("not implemented yet");
@@ -107,5 +116,51 @@ public class BaseballElimination {
         }
 
         throw new IllegalArgumentException("team not valid");
+    }
+
+    private FlowNetwork constructFlowNetwork(String team) {
+        //how many vertices?
+        //1 for source, 1 for target
+        //teams.len - 1 for other teams
+
+        FlowNetwork flow = new FlowNetwork(1 + 1 + teams.length - 1 + calculateGames(team));
+
+        //add edges
+        //add game edges
+        //add game -> team edges
+        //add team -> target edges
+
+        return flow;
+    }
+
+    private int calculateGames(String team) {
+
+        //zero games don't count
+        //team's games don't count
+        //own games don't count
+
+        int teamIndex = findIndexOfTeam(team);
+
+        int gameCount = 0;
+        for (int i = 0; i < gamesAgaints.length; i++) {
+            for (int j = i+1; j < gamesAgaints[i].length; j++) {
+
+                if (i == teamIndex || j == teamIndex) {
+                    continue;
+                }
+
+                if (i == j) {
+                    continue;
+                }
+
+                if (gamesAgaints[i][j] == 0) {
+                    continue;
+                }
+
+                gameCount++;
+            }
+        }
+
+        return gameCount;
     }
 }

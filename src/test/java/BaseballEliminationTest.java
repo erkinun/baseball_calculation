@@ -84,4 +84,18 @@ public class BaseballEliminationTest {
 
         Assert.assertEquals(2, gameAgainst);
     }
+
+    @Test
+    public void testHowManyGamesToBePlayed() throws Throwable {
+        try {
+            Method gameCountMethod = BaseballElimination.class.getDeclaredMethod("calculateGames", String.class);
+            gameCountMethod.setAccessible(true);
+            int count = (Integer) gameCountMethod.invoke(division, "Montreal");
+
+            Assert.assertEquals(2, count);
+        }
+        catch (InvocationTargetException targetException) {
+            throw targetException.getCause();
+        }
+    }
 }
