@@ -86,20 +86,6 @@ public class BaseballEliminationTest {
     }
 
     @Test
-    public void testHowManyGamesToBePlayed() throws Throwable {
-        try {
-            Method gameCountMethod = BaseballElimination.class.getDeclaredMethod("calculateGames", String.class);
-            gameCountMethod.setAccessible(true);
-            int count = (Integer) gameCountMethod.invoke(division, "Montreal");
-
-            Assert.assertEquals(2, count);
-        }
-        catch (InvocationTargetException targetException) {
-            throw targetException.getCause();
-        }
-    }
-
-    @Test
     public void testConstructFlow() throws Throwable {
 
         Method constructFlow = BaseballElimination.class.getDeclaredMethod("constructFlowNetwork", String.class);

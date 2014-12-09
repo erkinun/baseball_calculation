@@ -72,7 +72,7 @@ public class BaseballElimination {
             // is given team eliminated?
 
         //construct the flow network
-        //FlowNetwork flow = constructFlowNetwork(team);
+        FlowNetwork flow = constructFlowNetwork(team);
 
         //find the max flow
 //        FordFulkerson alg = new FordFulkerson(flow, source, target);
@@ -91,10 +91,12 @@ public class BaseballElimination {
 
         BaseballElimination division = new BaseballElimination("files/baseball/teams4.txt");
 
-        for (String team : division.teams()) {
+        StdOut.println(division.isEliminated("Montreal"));
 
-            StdOut.println(team);
-
+//        for (String team : division.teams()) {
+//
+//            StdOut.println(team);
+//
 //           if (division.isEliminated(team)) {
 //                StdOut.print(team + " is eliminated by the subset R = { ");
 //                for (String t : division.certificateOfElimination(team)) {
@@ -105,7 +107,7 @@ public class BaseballElimination {
 //            else {
 //                StdOut.println(team + " is not eliminated");
 //            }
-        }
+//        }
     }
 
     private int findIndexOfTeam(String team) {
@@ -123,8 +125,7 @@ public class BaseballElimination {
         //1 for source, 1 for target
         //teams.len - 1 for other teams
 
-        int totalGameCount = calculateGames(team);
-        FlowNetwork flow = new FlowNetwork(1 + 1 + teams.length - 1 + totalGameCount);
+        FlowNetwork flow = new FlowNetwork(1 + 1 + teams.length + numberOfTeams*numberOfTeams);
 
         //add edges
         //add game edges
@@ -150,25 +151,22 @@ public class BaseballElimination {
                 }
 
                 //add edge from source to game
-                flow.addEdge(new FlowEdge(0, gameIndex, gamesAgaints[i][j]));
+                gameIndex = calculateGameIndex(i, j);
+
                 //team 1
-                int team1Ix = totalGameCount + i + 1;
+                flow.addEdge(new FlowEdge(0, gameIndex, gamesAgaints[i][j]));
+
+                int team1Ix = i + 1;
                 flow.addEdge(new FlowEdge(gameIndex, team1Ix , Double.POSITIVE_INFINITY));
 
-                int cap1 = possibleWinsForTeam - wins[i];
-                if (cap1 < 0) {
-                    cap1 = 0;
-                }
-                flow.addEdge(new FlowEdge(team1Ix, flow.V() - 1, cap1));
+                addEdge(flow, possibleWinsForTeam, i, team1Ix);
+
                 //team 2
-                int team2Ix = totalGameCount + j + 1;
+                int team2Ix = j + 1;
                 flow.addEdge(new FlowEdge(gameIndex, team2Ix, Double.POSITIVE_INFINITY));
 
-                int cap2 = possibleWinsForTeam - wins[j];
-                if (cap2 < 0) {
-                    cap2 = 0;
-                }
-                flow.addEdge(new FlowEdge(team2Ix, flow.V() - 1, cap2));
+                addEdge(flow, possibleWinsForTeam, j, team2Ix);
+
                 gameIndex++; //switch to other game if exists
 
             }
@@ -178,34 +176,24 @@ public class BaseballElimination {
         return flow;
     }
 
-    private int calculateGames(String team) {
+    private void addEdge(FlowNetwork flow, int possibleWinsForTeam, int i, int team1Ix) {
+        int cap1 = possibleWinsForTeam - wins[i];
+        if (cap1 < 0) {
+            cap1 = 0;
+        }
 
-        //zero games don't count
-        //team's games don't count
-        //own games don't count
-
-        int teamIndex = findIndexOfTeam(team);
-
-        int gameCount = 0;
-        for (int i = 0; i < gamesAgaints.length; i++) {
-            for (int j = i+1; j < gamesAgaints[i].length; j++) {
-
-                if (i == teamIndex || j == teamIndex) {
-                    continue;
-                }
-
-                if (i == j) {
-                    continue;
-                }
-
-                if (gamesAgaints[i][j] == 0) {
-                    continue;
-                }
-
-                gameCount++;
+        FlowEdge edgeToAdd = new FlowEdge(team1Ix, flow.V() - 1, cap1);
+        for (FlowEdge edge : flow.adj(team1Ix)) {
+            if (edge.from() == edgeToAdd.from() && edge.to() == edgeToAdd.to()) {
+                return;
             }
         }
 
-        return gameCount;
+        flow.addEdge(edgeToAdd);
     }
+
+    private int calculateGameIndex(int i, int j) {
+        return numberOfTeams + ((i+1) * (j+1));
+    }
+
 }
