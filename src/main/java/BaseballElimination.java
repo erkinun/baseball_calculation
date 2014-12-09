@@ -69,16 +69,23 @@ public class BaseballElimination {
         return gamesAgaints[findIndexOfTeam(team1)][findIndexOfTeam(team2)];
     }
     public boolean isEliminated(String team) {
-            // is given team eliminated?
+        // is given team eliminated?
+        //don't forget the trivial elimination
 
         //construct the flow network
         FlowNetwork flow = constructFlowNetwork(team);
 
         //find the max flow
-//        FordFulkerson alg = new FordFulkerson(flow, source, target);
-//        alg.value();
+        FordFulkerson alg = new FordFulkerson(flow, 0, flow.V()-1);
+        StdOut.print(alg.value());
 
-        throw new IllegalStateException("not implemented yet");
+        for (FlowEdge edge : flow.adj(0)) {
+            if (edge.residualCapacityTo(edge.to()) != 0) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public Iterable<String> certificateOfElimination(String team) {
@@ -91,7 +98,7 @@ public class BaseballElimination {
 
         BaseballElimination division = new BaseballElimination("files/baseball/teams4.txt");
 
-        StdOut.println(division.isEliminated("Montreal"));
+        StdOut.println(division.isEliminated("Atlanta"));
 
 //        for (String team : division.teams()) {
 //
