@@ -123,12 +123,57 @@ public class BaseballElimination {
         //1 for source, 1 for target
         //teams.len - 1 for other teams
 
-        FlowNetwork flow = new FlowNetwork(1 + 1 + teams.length - 1 + calculateGames(team));
+        int totalGameCount = calculateGames(team);
+        FlowNetwork flow = new FlowNetwork(1 + 1 + teams.length - 1 + totalGameCount);
 
         //add edges
         //add game edges
+
         //add game -> team edges
         //add team -> target edges
+        int teamIndex = findIndexOfTeam(team);
+        int possibleWinsForTeam = wins[teamIndex] + remaining[teamIndex];
+        int gameIndex = 1;
+        for (int i = 0; i < gamesAgaints.length; i++) {
+            for (int j = i+1; j < gamesAgaints[i].length; j++) {
+
+                if (i == teamIndex || j == teamIndex) {
+                    continue;
+                }
+
+                if (i == j) {
+                    continue;
+                }
+
+                if (gamesAgaints[i][j] == 0) {
+                    continue;
+                }
+
+                //add edge from source to game
+                flow.addEdge(new FlowEdge(0, gameIndex, gamesAgaints[i][j]));
+                //team 1
+                int team1Ix = totalGameCount + i + 1;
+                flow.addEdge(new FlowEdge(gameIndex, team1Ix , Double.POSITIVE_INFINITY));
+
+                int cap1 = possibleWinsForTeam - wins[i];
+                if (cap1 < 0) {
+                    cap1 = 0;
+                }
+                flow.addEdge(new FlowEdge(team1Ix, flow.V() - 1, cap1));
+                //team 2
+                int team2Ix = totalGameCount + j + 1;
+                flow.addEdge(new FlowEdge(gameIndex, team2Ix, Double.POSITIVE_INFINITY));
+
+                int cap2 = possibleWinsForTeam - wins[j];
+                if (cap2 < 0) {
+                    cap2 = 0;
+                }
+                flow.addEdge(new FlowEdge(team2Ix, flow.V() - 1, cap2));
+                gameIndex++; //switch to other game if exists
+
+            }
+        }
+        System.out.println(flow.toString());
 
         return flow;
     }

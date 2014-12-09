@@ -98,4 +98,16 @@ public class BaseballEliminationTest {
             throw targetException.getCause();
         }
     }
+
+    @Test
+    public void testConstructFlow() throws Throwable {
+
+        Method constructFlow = BaseballElimination.class.getDeclaredMethod("constructFlowNetwork", String.class);
+        constructFlow.setAccessible(true);
+        FlowNetwork flow = (FlowNetwork) constructFlow.invoke(division, "Montreal");
+
+        System.out.println(flow.toString());
+
+        Assert.assertNotNull(flow);
+    }
 }
