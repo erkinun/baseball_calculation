@@ -77,7 +77,7 @@ public class BaseballElimination {
 
         //find the max flow
         FordFulkerson alg = new FordFulkerson(flow, 0, flow.V()-1);
-        StdOut.print(alg.value());
+        //StdOut.print(alg.value());
 
         for (FlowEdge edge : flow.adj(0)) {
             if (edge.residualCapacityTo(edge.to()) != 0) {
@@ -98,23 +98,20 @@ public class BaseballElimination {
 
         BaseballElimination division = new BaseballElimination("files/baseball/teams4.txt");
 
-        StdOut.println(division.isEliminated("Atlanta"));
+        for (String team : division.teams()) {
 
-//        for (String team : division.teams()) {
-//
-//            StdOut.println(team);
-//
-//           if (division.isEliminated(team)) {
+           if (division.isEliminated(team)) {
+               StdOut.println("team: " + team + " is eliminated");
 //                StdOut.print(team + " is eliminated by the subset R = { ");
 //                for (String t : division.certificateOfElimination(team)) {
 //                    StdOut.print(t + " ");
 //                }
 //                StdOut.println("}");
-//            }
-//            else {
-//                StdOut.println(team + " is not eliminated");
-//            }
-//        }
+            }
+            else {
+                StdOut.println(team + " is not eliminated");
+            }
+        }
     }
 
     private int findIndexOfTeam(String team) {
@@ -178,8 +175,6 @@ public class BaseballElimination {
 
             }
         }
-        System.out.println(flow.toString());
-
         return flow;
     }
 
