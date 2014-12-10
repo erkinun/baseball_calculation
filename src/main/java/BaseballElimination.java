@@ -1,4 +1,3 @@
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -24,7 +23,7 @@ public class BaseballElimination {
         //New_York      78 78  6  6 0 0 0
         //Montreal      77 82  3  1 2 0 0
 
-        In in = new In(new File(filename));
+        In in = new In(filename);
 
         numberOfTeams = in.readInt();
         wins = new int[numberOfTeams];
