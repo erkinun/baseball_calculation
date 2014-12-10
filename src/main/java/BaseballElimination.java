@@ -1,5 +1,7 @@
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by ERKIN on 07/12/14.
@@ -75,10 +77,7 @@ public class BaseballElimination {
         if (triviallyEliminated(team)) return true;
 
         //construct the flow network
-        FlowNetwork flow = constructFlowNetwork(team);
-
-        //find the max flow
-        FordFulkerson alg = new FordFulkerson(flow, 0, flow.V()-1);
+        FlowNetwork flow = getMaxFlow(team);
         //StdOut.print(alg.value());
 
         for (FlowEdge edge : flow.adj(0)) {
@@ -93,7 +92,36 @@ public class BaseballElimination {
 
     public Iterable<String> certificateOfElimination(String team) {
             // subset R of teams that eliminates given team; null if not eliminated
-        throw new IllegalStateException("not implemented yet");
+        if (!isEliminated(team)) {
+            return null;
+        }
+
+        List<String> certificateTeams = new ArrayList<String>();
+
+        //also check trivially eliminated teams
+        int indexTeam = findIndexOfTeam(team);
+        for (int i = 0; i < teams.length; i++) {
+            if (wins[indexTeam] + remaining[indexTeam] < wins[i]) {
+                certificateTeams.add(teams[i]);
+                return certificateTeams;
+            }
+        }
+
+        FlowNetwork flow = constructFlowNetwork(team);
+
+        //find the max flow
+        FordFulkerson alg = new FordFulkerson(flow, 0, flow.V()-1);
+
+        int checkTeam;
+        for (int i = 0; i < teams.length; i++) {
+            checkTeam = i + 1; //1 for source vertex
+
+            if (alg.inCut(checkTeam)) {
+                certificateTeams.add(teams[i]);
+            }
+        }
+
+        return certificateTeams;
     }
 
     public static void main(String[] args) {
@@ -104,15 +132,15 @@ public class BaseballElimination {
         for (String team : division.teams()) {
 
            if (division.isEliminated(team)) {
-               StdOut.println("team: " + team + " is eliminated");
-//                StdOut.print(team + " is eliminated by the subset R = { ");
-//                for (String t : division.certificateOfElimination(team)) {
-//                    StdOut.print(t + " ");
-//                }
-//                StdOut.println("}");
+               //StdOut.println("team: " + team + " is eliminated");
+                StdOut.print(team + " is eliminated by the subset R = { ");
+                for (String t : division.certificateOfElimination(team)) {
+                    StdOut.print(t + " ");
+                }
+                StdOut.println("}");
             }
             else {
-                StdOut.println(team + " is not eliminated");
+               StdOut.println(team + " is not eliminated");
             }
         }
     }
@@ -141,7 +169,7 @@ public class BaseballElimination {
         //add team -> target edges
         int teamIndex = findIndexOfTeam(team);
         int possibleWinsForTeam = wins[teamIndex] + remaining[teamIndex];
-        int gameIndex = 1;
+        int gameIndex;
         for (int i = 0; i < gamesAgaints.length; i++) {
             for (int j = i+1; j < gamesAgaints[i].length; j++) {
 
@@ -210,5 +238,13 @@ public class BaseballElimination {
             }
         }
         return false;
+    }
+
+    private FlowNetwork getMaxFlow(String team) {
+        FlowNetwork flow = constructFlowNetwork(team);
+
+        //find the max flow
+        FordFulkerson alg = new FordFulkerson(flow, 0, flow.V()-1);
+        return flow;
     }
 }
