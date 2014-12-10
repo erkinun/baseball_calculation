@@ -72,6 +72,8 @@ public class BaseballElimination {
         // is given team eliminated?
         //don't forget the trivial elimination
 
+        if (triviallyEliminated(team)) return true;
+
         //construct the flow network
         FlowNetwork flow = constructFlowNetwork(team);
 
@@ -87,6 +89,7 @@ public class BaseballElimination {
 
         return false;
     }
+
 
     public Iterable<String> certificateOfElimination(String team) {
             // subset R of teams that eliminates given team; null if not eliminated
@@ -198,4 +201,14 @@ public class BaseballElimination {
         return numberOfTeams + ((i+1) * (j+1));
     }
 
+    private boolean triviallyEliminated(String team) {
+        int teamIndex = findIndexOfTeam(team);
+
+        for (int winEach : wins) {
+            if (wins[teamIndex] + remaining[teamIndex] < winEach) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
