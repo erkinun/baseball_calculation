@@ -101,7 +101,7 @@ public class BaseballEliminationTest {
     public void testTrivialEliminationForMontreal() throws Exception {
         Method trivial = BaseballElimination.class.getDeclaredMethod("triviallyEliminated", String.class);
         trivial.setAccessible(true);
-        Boolean isEliminated = (Boolean) trivial.invoke(division, "Montreal");
+        boolean isEliminated = (Boolean) trivial.invoke(division, "Montreal");
 
         Assert.assertTrue(isEliminated);
     }

@@ -125,9 +125,8 @@ public class BaseballElimination {
     }
 
     public static void main(String[] args) {
-        StdOut.println("printing teams");
 
-        BaseballElimination division = new BaseballElimination("files/baseball/teams4.txt");
+        BaseballElimination division = new BaseballElimination(args[0]);
 
         for (String team : division.teams()) {
 
@@ -245,6 +244,11 @@ public class BaseballElimination {
 
         //find the max flow
         FordFulkerson alg = new FordFulkerson(flow, 0, flow.V()-1);
+
+        if (alg == null) {
+            throw new IllegalStateException("alg result is null!");
+        }
+
         return flow;
     }
 }
